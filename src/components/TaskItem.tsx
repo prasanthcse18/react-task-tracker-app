@@ -1,10 +1,10 @@
-interface Task {
+export interface Task {
     id: number;
     title: string;
     isCompleted: boolean;
 }
 
-interface TaskItemProps {
+export interface TaskItemProps {
     task: Task;
     onDelete: (id: number) => void;
 }

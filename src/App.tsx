@@ -1,20 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TaskInput } from './components/TaskInput';
-import { TaskItem } from './components/TaskItem';
+import { TaskItem, type Task } from './components/TaskItem';
 import { CoffeeTracker } from './components/CoffeeTracker';
 
-// We export this so other files can use it if needed
-export interface Task {
-  id: number;
-  title: string;
-  isCompleted: boolean;
-}
-
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: "Refactor Component Structure", isCompleted: true },
-    { id: 2, title: "Master React Props", isCompleted: false },
-  ]);
+  // ----------------------------------------------------
+  // BUCKET 1: TASKS STATE (Top Level)
+  // ----------------------------------------------------
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const savedTasks = localStorage.getItem("staff-engineer-tasks");
+    if (savedTasks) {
+      return JSON.parse(savedTasks);
+    }
+    return [
+      { id: 1, title: "Refactor Component Structure", isCompleted: true },
+      { id: 2, title: "Master React Props", isCompleted: false },
+    ];
+  });
+
+  // ----------------------------------------------------
+  // BUCKET 2: DARK MODE STATE (Top Level - SEPARATE!)
+  // ----------------------------------------------------
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    const savedTheme = localStorage.getItem("app-theme");
+    return savedTheme === "dark";
+  });
+
+  // ----------------------------------------------------
+  // SIDE EFFECTS (The "Auto-Save" Robots)
+  // ----------------------------------------------------
+
+  // Robot 1: Save Tasks when they change
+  useEffect(() => {
+    localStorage.setItem("staff-engineer-tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  // Robot 2: Save Theme when it changes
+  useEffect(() => {
+    localStorage.setItem("app-theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
+  // ----------------------------------------------------
+  // HANDLERS (The Actions)
+  // ----------------------------------------------------
+
+  const toggleTheme = () => {
+    setIsDarkMode(prev => !prev);
+  };
 
   const handleAddTask = (title: string) => {
     const newTask: Task = {
@@ -29,30 +61,46 @@ function App() {
     setTasks(tasks.filter(task => task.id !== idToDelete));
   };
 
+  // ----------------------------------------------------
+  // THE UI
+  // ----------------------------------------------------
   return (
-    <main style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto', fontFamily: 'system-ui' }}>
-      <h1>Staff Engineer Task Tracker</h1>
+    <main style={{
+      backgroundColor: isDarkMode ? '#222' : '#fff', // <--- DYNAMIC COLOR
+      color: isDarkMode ? '#fff' : '#000',           // <--- DYNAMIC TEXT
+      minHeight: '100vh',
+      padding: '2rem',
+      fontFamily: 'system-ui',
+      transition: 'all 0.3s ease'
+    }}>
 
-      {/* The Input Component */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>Staff Engineer Task Tracker</h1>
+
+        {/* The Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          style={{
+            padding: '8px 16px',
+            cursor: 'pointer',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+            background: isDarkMode ? '#444' : '#eee',
+            color: isDarkMode ? '#fff' : '#000'
+          }}
+        >
+          {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+        </button>
+      </div>
+
       <TaskInput onAddTask={handleAddTask} />
 
-      {/* The List Logic */}
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {tasks.map((task) => (
-          // We pass the "task" object AND the "delete" function down
-          <TaskItem
-            key={task.id}
-            task={task}
-            onDelete={handleDeleteTask}
-          />
+          <TaskItem key={task.id} task={task} onDelete={handleDeleteTask} />
         ))}
       </ul>
 
-      {tasks.length === 0 && (
-        <p style={{ textAlign: 'center', color: '#888' }}>
-          All clear! Time to relax. ☕
-        </p>
-      )}
       <CoffeeTracker />
     </main>
   );

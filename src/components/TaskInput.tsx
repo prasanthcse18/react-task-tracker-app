@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // Define what this component needs from its parent (App)
-interface TaskInputProps {
+export interface TaskInputProps {
     onAddTask: (title: string) => void;
 }
 
