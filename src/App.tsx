@@ -1,80 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import { useTheme } from './context/ThemeContext'; // <--- The new magic hook
 import { TaskInput } from './components/TaskInput';
 import { TaskItem, type Task } from './components/TaskItem';
-import { CoffeeTracker } from './components/CoffeeTracker';
+import { Quote } from './components/Quote'; // Don't forget your quote!
 
 function App() {
-  // ----------------------------------------------------
-  // BUCKET 1: TASKS STATE (Top Level)
-  // ----------------------------------------------------
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    const savedTasks = localStorage.getItem("staff-engineer-tasks");
-    if (savedTasks) {
-      return JSON.parse(savedTasks);
-    }
-    return [
-      { id: 1, title: "Refactor Component Structure", isCompleted: true },
-      { id: 2, title: "Master React Props", isCompleted: false },
-    ];
-  });
+  // 1. Get Theme from Context (No useState here!)
+  const { isDarkMode, toggleTheme } = useTheme();
 
-  // ----------------------------------------------------
-  // BUCKET 2: DARK MODE STATE (Top Level - SEPARATE!)
-  // ----------------------------------------------------
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    const savedTheme = localStorage.getItem("app-theme");
-    return savedTheme === "dark";
-  });
-
-  // ----------------------------------------------------
-  // SIDE EFFECTS (The "Auto-Save" Robots)
-  // ----------------------------------------------------
-
-  // Robot 1: Save Tasks when they change
-  useEffect(() => {
-    localStorage.setItem("staff-engineer-tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  // Robot 2: Save Theme when it changes
-  useEffect(() => {
-    localStorage.setItem("app-theme", isDarkMode ? "dark" : "light");
-  }, [isDarkMode]);
-
-  // ----------------------------------------------------
-  // HANDLERS (The Actions)
-  // ----------------------------------------------------
-
-  const toggleTheme = () => {
-    setIsDarkMode(prev => !prev);
-  };
+  // 2. Tasks still live here (for now)
+  const [tasks, setTasks] = useLocalStorage<Task[]>("staff-engineer-tasks", [
+    { id: 1, title: "Master React Context", isCompleted: false },
+  ]);
 
   const handleAddTask = (title: string) => {
-    const newTask: Task = {
-      id: Date.now(),
-      title: title,
-      isCompleted: false
-    };
+    const newTask: Task = { id: Date.now(), title, isCompleted: false };
     setTasks([...tasks, newTask]);
   };
 
-  const handleDeleteTask = (idToDelete: number) => {
-    setTasks(tasks.filter(task => task.id !== idToDelete));
+  const handleDeleteTask = (id: number) => {
+    setTasks(tasks.filter(t => t.id !== id));
   };
 
-  // ----------------------------------------------------
-  // THE UI
-  // ----------------------------------------------------
   return (
     <main style={{
-      backgroundColor: isDarkMode ? '#222' : '#fff', // <--- DYNAMIC COLOR
-      color: isDarkMode ? '#fff' : '#000',           // <--- DYNAMIC TEXT
+      backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
+      color: isDarkMode ? '#ffffff' : '#000000',
       minHeight: '100vh',
       padding: '2rem',
-      fontFamily: 'system-ui',
-      transition: 'all 0.3s ease'
+      fontFamily: 'Inter, system-ui, sans-serif',
+      transition: 'background-color 0.3s ease'
     }}>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1>Staff Engineer Task Tracker</h1>
 
         {/* The Toggle Button */}
@@ -82,26 +39,26 @@ function App() {
           onClick={toggleTheme}
           style={{
             padding: '8px 16px',
+            borderRadius: '8px',
+            border: 'none',
+            background: isDarkMode ? '#333' : '#e5e7eb',
+            color: isDarkMode ? '#fff' : '#000',
             cursor: 'pointer',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-            background: isDarkMode ? '#444' : '#eee',
-            color: isDarkMode ? '#fff' : '#000'
+            fontWeight: '600'
           }}
         >
-          {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+          {isDarkMode ? "☀️ Light" : "🌙 Dark"}
         </button>
       </div>
 
+      <Quote />
       <TaskInput onAddTask={handleAddTask} />
 
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {tasks.map((task) => (
+      <div style={{ marginTop: '20px' }}>
+        {tasks.map(task => (
           <TaskItem key={task.id} task={task} onDelete={handleDeleteTask} />
         ))}
-      </ul>
-
-      <CoffeeTracker />
+      </div>
     </main>
   );
 }
