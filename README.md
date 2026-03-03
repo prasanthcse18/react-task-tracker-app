@@ -45,7 +45,7 @@ This application was developed to translate my 8+ years of deep DOM optimization
 
 ## Author
 **Prasanth Ganesan**
-- [LinkedIn Profile](https://www.linkedin.com/in/prasanthganesan/) ```
+- [LinkedIn Profile](https://www.linkedin.com/in/erprasanthcse/) ```
 
 ***
 
@@ -80,4 +80,4 @@ As a **Google Cloud Certified Professional in Generative AI**, I am passionate a
 * **Quality & Infrastructure:** Jest, Karma, Git, CI/CD, Webpack, Vite
 * **Cloud:** Google Cloud Platform (GCP), Vertex AI, Azure
 
-### Get in Touch:https://www.linkedin.com/in/erprasanthcse/
+### Get in Touch
