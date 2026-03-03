@@ -19,7 +19,7 @@ Language: TypeScript
 
 Build Tool: Vite
 
-Styling: [Insert CSS framework, e.g., Tailwind CSS, CSS Modules]
+Styling: SCSS
 
 Linting: ESLint with React-specific rules enabled
 
@@ -32,12 +32,12 @@ npm or yarn
 Installation
 Clone the repository:
 
-Bash
-git clone [Your Repository URL Here]
+git clone https://github.com/prasanthcse18/react-task-tracker-app.git
+
 Navigate to the project directory:
 
 Bash
-cd [Your Project Directory Name]
+cd react-task-tracker-app
 Install dependencies:
 
 Bash
@@ -50,7 +50,6 @@ npm run dev
 Navigate to http://localhost:5173 (or the port specified by Vite) in your browser to view the application.
 
 Architectural Notes
-(This section is crucial for Staff/Lead engineering interviews)
 
 This application was built to translate my 8+ years of deep DOM optimization and Angular enterprise architecture experience into the React ecosystem. Key focuses include:
 
