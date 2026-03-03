@@ -81,3 +81,4 @@ As a **Google Cloud Certified Professional in Generative AI**, I am passionate a
 * **Cloud:** Google Cloud Platform (GCP), Vertex AI, Azure
 
 ### Get in Touch
+- 💼 [Connect with me on LinkedIn](https://www.linkedin.com/in/erprasanthcse/)
